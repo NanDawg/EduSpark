@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  name         String
+  classLevel   Int
+  avatar       String?
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  createdAt    DateTime @default(now())
+  chats        SparkChat[]
+  logs         AIGenerationLog[]
+  safetyLogs   SafetyLog[]
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  materials   CurriculumMaterial[]
+  createdAt   DateTime @default(now())
+}
+
+model CurriculumMaterial {
+  id                String   @id @default(cuid())
+  subjectId         String
+  subject           Subject  @relation(fields: [subjectId], references: [id])
+  classLevel        Int
+  topic             String
+  learningObjective String?
+  title             String
+  content           String
+  example           String
+  summary           String
+  createdAt         DateTime @default(now())
+
+  @@unique([subjectId, classLevel, topic])
+  @@index([classLevel])
+}
+
+model SparkChat {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      String
+  content   String
+  blocked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model AIGenerationLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  type       String
+  prompt     String
+  response   String?
+  model      String   @default("gemini")
+  status     String
+  durationMs Int?
+  createdAt  DateTime @default(now())
+
+  @@index([type, status])
+}
+
+model SafetyLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  stage     String
+  content   String
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([stage])
+}
