@@ -1,6 +1,7 @@
 import "server-only";
 import { getGeminiClient, GEMINI_MODEL } from "@/lib/gemini";
-import { logSafety } from "@/features/ai/log";
+import { logAIGeneration, logSafety } from "@/features/ai/log";
+import { SCOPE_GENERATION_CONFIG, SCOPE_PROMPT, interpretScopeResponse } from "@/features/ai/scope-check";
 
 const MAX_INPUT_LENGTH = 2000;
 
@@ -46,16 +47,11 @@ export function filterOutput(text: string): SafetyVerdict {
   return { ok: true };
 }
 
-const SCOPE_PROMPT = `Kamu adalah penjaga keamanan untuk aplikasi belajar siswa SD kelas 1-6 di Indonesia.
-Tugasmu: putuskan apakah pertanyaan siswa masih dalam lingkup pembelajaran sekolah dasar.
-Lingkup yang diizinkan: Bahasa Indonesia, Matematika, IPAS (sains dan sosial dasar), tugas sekolah, dan topik belajar umum yang pantas untuk anak usia 6-12 tahun.
-Lingkup yang ditolak: hal di luar pelajaran sekolah yang tidak pantas untuk anak, permintaan bantuan untuk hal berbahaya, atau topik dewasa.
-Balas HANYA dengan JSON valid: {"verdict":"allowed"|"blocked","reason":"alasan singkat"}`;
-
 export async function checkEducationalScope(
   question: string,
   userId?: string | null
 ): Promise<SafetyVerdict> {
+  const startedAt = Date.now();
   try {
     const gemini = getGeminiClient();
     const response = await gemini.models.generateContent({
@@ -63,28 +59,41 @@ export async function checkEducationalScope(
       contents: `Pertanyaan siswa:\n${question}`,
       config: {
         systemInstruction: SCOPE_PROMPT,
-        temperature: 0,
-        maxOutputTokens: 100,
-        responseMimeType: "application/json",
+        ...SCOPE_GENERATION_CONFIG,
       },
     });
 
     const raw = response.text ?? "";
-    const parsed = JSON.parse(raw) as { verdict?: string; reason?: string };
-    const allowed = parsed.verdict === "allowed";
+    const outcome = interpretScopeResponse(raw);
 
-    if (!allowed) {
+    if (outcome.status === "invalid") {
+      console.error("Scope check mengembalikan respons tidak valid", raw.slice(0, 500));
+      await logAIGeneration({
+        userId,
+        type: "scope-check",
+        prompt: question,
+        response: raw,
+        status: "failed",
+        durationMs: Date.now() - startedAt,
+      });
+      return {
+        ok: false,
+        outage: true,
+        reason: "Pemeriksaan keamanan sedang bermasalah",
+      };
+    }
+
+    if (outcome.status === "blocked") {
       await logSafety({
         userId,
         stage: "scope",
         content: question,
-        reason: parsed.reason ?? "di luar lingkup pembelajaran",
+        reason: outcome.reason,
       });
+      return { ok: false, reason: outcome.reason };
     }
 
-    return allowed
-      ? { ok: true }
-      : { ok: false, reason: parsed.reason ?? "di luar lingkup pembelajaran" };
+    return { ok: true };
   } catch (error) {
     console.error("Scope check gagal", error);
     return {
