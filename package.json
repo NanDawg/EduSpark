@@ -10,7 +10,10 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "smoke:services": "tsx --conditions=react-server scripts/smoke-services.ts"
+    "smoke:services": "tsx --conditions=react-server scripts/smoke-services.ts",
+    "smoke:gamification": "tsx --conditions=react-server scripts/smoke-gamification.ts",
+    "smoke:phase2-http": "tsx scripts/smoke-phase2-http.ts",
+    "smoke:phase2-e2e": "tsx --conditions=react-server scripts/smoke-phase2-e2e.ts"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",

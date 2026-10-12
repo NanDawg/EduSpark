@@ -3,13 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, House, LogOut, MessageCircle } from "lucide-react";
+import { BookOpen, ClipboardCheck, House, LogOut, MessageCircle } from "lucide-react";
 import { logoutAction } from "@/actions/auth";
 import { cn } from "cn";
 
 const navItems = [
   { href: "/dashboard", label: "Beranda", icon: House },
   { href: "/learn", label: "Belajar", icon: BookOpen },
+  { href: "/quiz", label: "Kuis", icon: ClipboardCheck },
   { href: "/spark", label: "Spark", icon: MessageCircle },
 ] as const;
 
@@ -111,7 +112,7 @@ export function AppNav({
         aria-label="Navigasi utama"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
       >
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-4">
           {navItems.map((item) => {
             const active = isActive(pathname, item.href);
             const Icon = item.icon;
