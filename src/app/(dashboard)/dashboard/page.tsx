@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ProgressBar } from "@/components/ui/progress-bar";
 import { SubjectCard } from "@/features/dashboard/components/subject-card";
 import { SparkCtaCard } from "@/features/dashboard/components/spark-cta-card";
 import { getCurrentUser } from "@/features/auth/user";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { getLevelProgress } from "@/features/gamification/config";
+import { getStreak, listXpHistory } from "@/features/gamification/service";
+import { listBadgesWithStatus } from "@/features/gamification/badges";
+import { LevelCard } from "@/features/gamification/components/level-card";
+import { BadgeGallery } from "@/features/gamification/components/badge-gallery";
+import { XpHistory } from "@/features/gamification/components/xp-history";
+import { getLearningProgress } from "@/features/progress/service";
+import { ProgressSection } from "@/features/progress/components/progress-section";
 
 export const metadata: Metadata = {
   title: "Beranda | EduSpark",
@@ -25,8 +32,16 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const subjects = await prisma.subject.findMany({ orderBy: { name: "asc" } });
+  const [subjects, badges, streak, xpHistory, learningProgress] =
+    await Promise.all([
+      prisma.subject.findMany({ orderBy: { name: "asc" } }),
+      listBadgesWithStatus(user.id),
+      getStreak(user.id),
+      listXpHistory(user.id, 6),
+      getLearningProgress(user.id),
+    ]);
   const initial = user.name.trim().charAt(0).toUpperCase() || "S";
+  const levelProgress = getLevelProgress(user.xp);
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6 sm:px-6 md:py-10">
@@ -65,28 +80,15 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center gap-4 rounded-xl border border-border bg-card p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-lg font-semibold text-foreground">
-                Level {user.level}
-              </span>
-              <span className="rounded-full bg-reward px-2.5 py-0.5 text-xs font-bold text-foreground">
-                {user.xp} XP
-              </span>
-            </div>
-          </div>
-          <ProgressBar
-            value={user.xp}
-            max={100}
-            label="Menuju level berikutnya"
-            valueText={`${user.xp} / 100 XP`}
-          />
-          <p className="text-xs text-muted-foreground">
-            Cara mengumpulkan XP akan hadir di pembaruan berikutnya.
-          </p>
-        </div>
+        <LevelCard
+          name={user.name}
+          xp={user.xp}
+          levelProgress={levelProgress}
+          streak={streak}
+        />
       </section>
+
+      <ProgressSection progress={learningProgress} />
 
       <section aria-labelledby="subjects-heading" className="flex flex-col gap-4">
         <h2
@@ -115,6 +117,10 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+
+      <BadgeGallery badges={badges} />
+
+      <XpHistory entries={xpHistory} />
 
       <SparkCtaCard />
     </div>

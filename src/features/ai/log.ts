@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 
-export type AIGenerationType = "curriculum" | "spark" | "scope-check";
+export type AIGenerationType = "curriculum" | "spark" | "scope-check" | "quiz";
 export type AIGenerationStatus = "success" | "failed" | "blocked";
 
 export async function logAIGeneration(entry: {

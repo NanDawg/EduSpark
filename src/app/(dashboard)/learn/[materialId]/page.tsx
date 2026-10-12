@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/features/auth/user";
 import { getMaterialById } from "@/features/curriculum/service";
+import { isMaterialCompleted } from "@/features/progress/service";
+import { CompleteMaterialButton } from "@/features/progress/components/complete-button";
 
 export const metadata: Metadata = {
   title: "Materi | EduSpark",
@@ -25,6 +27,8 @@ export default async function MaterialPage({
   if (!material) {
     notFound();
   }
+
+  const completed = await isMaterialCompleted(user.id, material.id);
 
   return (
     <article className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-6 sm:px-6 md:py-10">
@@ -85,19 +89,25 @@ export default async function MaterialPage({
         </div>
       </section>
 
-      <footer className="flex flex-wrap gap-3">
-        <Link
-          href="/learn"
-          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
-        >
-          Buat materi lain
-        </Link>
-        <Link
-          href="/spark"
-          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-        >
-          Tanya Spark tentang ini
-        </Link>
+      <footer className="flex flex-col gap-4">
+        <CompleteMaterialButton
+          materialId={material.id}
+          initiallyCompleted={completed}
+        />
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/learn"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
+          >
+            Buat materi lain
+          </Link>
+          <Link
+            href="/spark"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            Tanya Spark tentang ini
+          </Link>
+        </div>
       </footer>
     </article>
   );
