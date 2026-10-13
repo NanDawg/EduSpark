@@ -5,7 +5,7 @@ import { getLevelProgress, levelForXp, type LevelProgress } from "@/features/gam
 export type AwardXpInput = {
   userId: string;
   amount: number;
-  source: "material" | "quiz" | "quiz_bonus";
+  source: "material" | "quiz" | "quiz_bonus" | "adventure";
   reason: string;
   refId?: string;
 };

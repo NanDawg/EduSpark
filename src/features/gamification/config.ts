@@ -10,6 +10,11 @@ export const LEVEL_THRESHOLDS = [0, 100, 300, 600] as const;
 export const STREAK_BADGE_DAYS = 3;
 export const XP_BADGE_TARGET = 100;
 
+export const ADVENTURE_CONFIG = {
+  masterScore: 80,
+  pathCompleteXp: 30,
+} as const;
+
 export type BadgeDefinition = {
   id: string;
   name: string;
@@ -47,6 +52,12 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     name: "Pemburu XP",
     description: "Kumpulkan total 100 XP.",
     icon: "trophy",
+  },
+  {
+    id: "path_complete",
+    name: "Penjelajah",
+    description: "Selesaikan satu jalur belajar sampai akhir.",
+    icon: "map",
   },
 ];
 

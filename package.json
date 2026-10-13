@@ -12,8 +12,10 @@
     "db:studio": "prisma studio",
     "smoke:services": "tsx --conditions=react-server scripts/smoke-services.ts",
     "smoke:gamification": "tsx --conditions=react-server scripts/smoke-gamification.ts",
+    "smoke:adventure": "tsx --conditions=react-server scripts/smoke-adventure.ts",
     "smoke:phase2-http": "tsx scripts/smoke-phase2-http.ts",
-    "smoke:phase2-e2e": "tsx --conditions=react-server scripts/smoke-phase2-e2e.ts"
+    "smoke:phase2-e2e": "tsx --conditions=react-server scripts/smoke-phase2-e2e.ts",
+    "smoke:phase3-http": "tsx scripts/smoke-phase3-http.ts"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",

@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import { getStreak } from "@/features/gamification/service";
 import { STREAK_BADGE_DAYS, XP_BADGE_TARGET } from "@/features/gamification/config";
+import { hasCompletedPath } from "@/features/adventure/service";
 
 export type UnlockedBadge = {
   id: string;
@@ -19,7 +20,7 @@ async function getEligibleBadgeIds(userId: string): Promise<string[]> {
     return [];
   }
 
-  const [completedQuizzes, perfectQuizzes, completedMaterials, streak] =
+  const [completedQuizzes, perfectQuizzes, completedMaterials, streak, pathDone] =
     await Promise.all([
       prisma.quizAttempt.count({
         where: { userId, status: "completed" },
@@ -29,6 +30,7 @@ async function getEligibleBadgeIds(userId: string): Promise<string[]> {
       }),
       prisma.materialProgress.count({ where: { userId } }),
       getStreak(userId),
+      hasCompletedPath(userId),
     ]);
 
   const eligible: string[] = [];
@@ -37,6 +39,7 @@ async function getEligibleBadgeIds(userId: string): Promise<string[]> {
   if (streak >= STREAK_BADGE_DAYS) eligible.push("streak_3");
   if (completedMaterials >= 1) eligible.push("lesson_done");
   if (user.xp >= XP_BADGE_TARGET) eligible.push("xp_100");
+  if (pathDone) eligible.push("path_complete");
   return eligible;
 }
 
