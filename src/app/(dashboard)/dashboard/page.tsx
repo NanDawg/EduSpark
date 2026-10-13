@@ -13,6 +13,8 @@ import { BadgeGallery } from "@/features/gamification/components/badge-gallery";
 import { XpHistory } from "@/features/gamification/components/xp-history";
 import { getLearningProgress } from "@/features/progress/service";
 import { ProgressSection } from "@/features/progress/components/progress-section";
+import { getAdventureOverview } from "@/features/adventure/service";
+import { JourneyCard } from "@/features/dashboard/components/journey-card";
 
 export const metadata: Metadata = {
   title: "Beranda | EduSpark",
@@ -32,13 +34,14 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [subjects, badges, streak, xpHistory, learningProgress] =
+  const [subjects, badges, streak, xpHistory, learningProgress, adventure] =
     await Promise.all([
       prisma.subject.findMany({ orderBy: { name: "asc" } }),
       listBadgesWithStatus(user.id),
       getStreak(user.id),
       listXpHistory(user.id, 6),
       getLearningProgress(user.id),
+      getAdventureOverview(user.id),
     ]);
   const initial = user.name.trim().charAt(0).toUpperCase() || "S";
   const levelProgress = getLevelProgress(user.xp);
@@ -89,6 +92,8 @@ export default async function DashboardPage() {
       </section>
 
       <ProgressSection progress={learningProgress} />
+
+      <JourneyCard summary={adventure.summary} />
 
       <section aria-labelledby="subjects-heading" className="flex flex-col gap-4">
         <h2

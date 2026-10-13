@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/features/auth/session";
 
-const protectedPrefixes = ["/dashboard", "/learn", "/quiz", "/spark"];
+const protectedPrefixes = ["/dashboard", "/adventure", "/learn", "/quiz", "/spark"];
 const authRoutes = ["/login", "/register"];
 
 export async function proxy(request: NextRequest) {
@@ -48,6 +48,7 @@ export const config = {
   matcher: [
     "/",
     "/dashboard/:path*",
+    "/adventure/:path*",
     "/learn/:path*",
     "/quiz/:path*",
     "/spark/:path*",

@@ -33,7 +33,37 @@ model Subject {
   slug        String   @unique
   materials   CurriculumMaterial[]
   quizzes     Quiz[]
+  paths       LearningPath[]
   createdAt   DateTime @default(now())
+}
+
+model LearningPath {
+  id          String       @id @default(cuid())
+  subjectId   String
+  subject     Subject      @relation(fields: [subjectId], references: [id])
+  classLevel  Int
+  title       String
+  description String?
+  order       Int
+  nodes       LessonNode[]
+  createdAt   DateTime     @default(now())
+
+  @@unique([subjectId, classLevel, order])
+  @@index([classLevel])
+}
+
+model LessonNode {
+  id        String       @id @default(cuid())
+  pathId    String
+  path      LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  order     Int
+  chapter   Int
+  title     String
+  objective String?
+  topic     String
+  createdAt DateTime     @default(now())
+
+  @@unique([pathId, order])
 }
 
 model CurriculumMaterial {

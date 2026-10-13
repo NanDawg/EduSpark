@@ -19,8 +19,9 @@ import {
   correctAnswerBonus,
 } from "@/features/gamification/config";
 import { awardXp } from "@/features/gamification/service";
-import { evaluateAndUnlockBadges } from "@/features/gamification/badges";
 
+import { evaluateAndUnlockBadges } from "@/features/gamification/badges";
+import { awardPathCompletionBonuses } from "@/features/adventure/service";
 export type GenerateQuizInput = {
   userId: string;
   subjectId: string;
@@ -387,6 +388,7 @@ export async function submitAttempt(
       data: { xpAwarded: totalXp },
     });
 
+    await awardPathCompletionBonuses(userId);
     await evaluateAndUnlockBadges(userId);
     return { ok: true };
   } catch (error) {

@@ -3,6 +3,7 @@ import {
   ClipboardCheck,
   Flame,
   Lock,
+  Map,
   Star,
   Trophy,
   type LucideIcon,
@@ -16,6 +17,7 @@ const ICONS: Record<string, LucideIcon> = {
   flame: Flame,
   "book-open": BookOpen,
   trophy: Trophy,
+  map: Map,
 };
 
 export function BadgeGallery({ badges }: { badges: BadgeWithEarned[] }) {

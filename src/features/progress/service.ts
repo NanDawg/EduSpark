@@ -6,6 +6,7 @@ import {
   type UnlockedBadge,
 } from "@/features/gamification/badges";
 import { XP_REWARDS } from "@/features/gamification/config";
+import { awardPathCompletionBonuses } from "@/features/adventure/service";
 
 export type MarkCompleteResult =
   | {
@@ -58,6 +59,7 @@ export async function markMaterialComplete(
     refId: materialId,
   });
 
+  await awardPathCompletionBonuses(userId);
   const unlockedBadges = await evaluateAndUnlockBadges(userId);
   return {
     ok: true,
