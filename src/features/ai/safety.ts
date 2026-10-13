@@ -96,6 +96,13 @@ export async function checkEducationalScope(
     return { ok: true };
   } catch (error) {
     console.error("Scope check gagal", error);
+    await logAIGeneration({
+      userId,
+      type: "scope-check",
+      prompt: question,
+      status: "failed",
+      durationMs: Date.now() - startedAt,
+    });
     return {
       ok: false,
       outage: true,

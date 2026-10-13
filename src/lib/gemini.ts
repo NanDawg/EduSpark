@@ -11,7 +11,13 @@ export function getGeminiClient(): GoogleGenAI {
   }
 
   if (!client) {
-    client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    client = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        timeout: 30_000,
+        retryOptions: { attempts: 2 },
+      },
+    });
   }
 
   return client;

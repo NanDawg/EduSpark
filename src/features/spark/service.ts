@@ -118,6 +118,10 @@ export async function askSpark(
     : "";
 
   try {
+    await prisma.sparkChat.create({
+      data: { userId: user.id, role: "user", content: input.question },
+    });
+
     const response = await gemini.models.generateContent({
       model: GEMINI_MODEL,
       contents,
@@ -154,11 +158,8 @@ export async function askSpark(
         status: "blocked",
         durationMs: Date.now() - startedAt,
       });
-      await prisma.sparkChat.createMany({
-        data: [
-          { userId: user.id, role: "user", content: input.question },
-          { userId: user.id, role: "assistant", content: reply, blocked: true },
-        ],
+      await prisma.sparkChat.create({
+        data: { userId: user.id, role: "assistant", content: reply, blocked: true },
       });
       return { ok: false, reply, blocked: true };
     }
@@ -172,11 +173,8 @@ export async function askSpark(
       durationMs: Date.now() - startedAt,
     });
 
-    await prisma.sparkChat.createMany({
-      data: [
-        { userId: user.id, role: "user", content: input.question },
-        { userId: user.id, role: "assistant", content: reply },
-      ],
+    await prisma.sparkChat.create({
+      data: { userId: user.id, role: "assistant", content: reply },
     });
 
     return { ok: true, reply };

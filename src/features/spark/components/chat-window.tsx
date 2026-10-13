@@ -18,48 +18,79 @@ type ChatWindowProps = {
   initialMessages: ChatMessage[];
 };
 
+const WATCHDOG_MS = 75_000;
+
 export function ChatWindow({ initialMessages }: ChatWindowProps) {
   const [messages, setMessages] = React.useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = React.useState("");
-  const [pending, startTransition] = React.useTransition();
+  const [awaiting, setAwaiting] = React.useState(false);
+  const [, startTransition] = React.useTransition();
   const bottomRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, pending]);
+  }, [messages, awaiting]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const question = input.trim();
-    if (!question || pending) return;
+    if (!question || awaiting) return;
 
     setMessages((current) => [
       ...current,
       { id: `local-${Date.now()}`, role: "user", content: question },
     ]);
     setInput("");
+    setAwaiting(true);
 
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.set("question", question);
-      const state = await sendSparkMessageAction({}, formData);
-      const replyContent =
-        state.reply ?? state.error ?? "Maaf, terjadi kesalahan. Coba lagi ya.";
+    const watchdogId = window.setTimeout(() => {
       setMessages((current) => [
         ...current,
         {
-          id: `reply-${Date.now()}`,
+          id: `timeout-${Date.now()}`,
           role: "assistant",
-          content: replyContent,
-          blocked: state.blocked,
+          content:
+            "Aku butuh waktu lebih lama dari biasanya dan jawaban belum sampai. Silakan coba kirim ulang pertanyaanmu, ya.",
         },
       ]);
+      setAwaiting(false);
+    }, WATCHDOG_MS);
+
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("question", question);
+        const state = await sendSparkMessageAction({}, formData);
+        const replyContent =
+          state.reply ?? state.error ?? "Maaf, terjadi kesalahan. Coba lagi ya.";
+        setMessages((current) => [
+          ...current,
+          {
+            id: `reply-${Date.now()}`,
+            role: "assistant",
+            content: replyContent,
+            blocked: state.blocked,
+          },
+        ]);
+      } catch {
+        setMessages((current) => [
+          ...current,
+          {
+            id: `error-${Date.now()}`,
+            role: "assistant",
+            content: "Maaf, terjadi kesalahan. Coba kirim ulang ya.",
+          },
+        ]);
+      } finally {
+        window.clearTimeout(watchdogId);
+        setAwaiting(false);
+      }
     });
   }
 
   function handleSuggestion(suggestion: string) {
-    if (pending) return;
+    if (awaiting) return;
     setInput(suggestion);
     inputRef.current?.focus();
   }
@@ -124,7 +155,7 @@ export function ChatWindow({ initialMessages }: ChatWindowProps) {
           </motion.div>
         ))}
 
-        {pending && (
+        {awaiting && (
           <p role="status" className="text-sm text-muted-foreground">
             Spark sedang berpikir...
           </p>
@@ -140,7 +171,7 @@ export function ChatWindow({ initialMessages }: ChatWindowProps) {
               key={suggestion}
               type="button"
               onClick={() => handleSuggestion(suggestion)}
-              disabled={pending}
+              disabled={awaiting}
               className="min-h-11 rounded-full border border-border bg-card px-4 text-left text-sm font-medium text-foreground transition-colors hover:border-brand hover:bg-brand-soft/50 disabled:opacity-50"
             >
               {suggestion}
@@ -173,7 +204,7 @@ export function ChatWindow({ initialMessages }: ChatWindowProps) {
         />
         <button
           type="submit"
-          disabled={pending || input.trim().length === 0}
+          disabled={awaiting || input.trim().length === 0}
           aria-label="Kirim pertanyaan"
           className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors hover:bg-primary/80 disabled:opacity-50"
         >
