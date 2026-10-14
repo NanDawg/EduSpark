@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { getGeminiClient, GEMINI_MODEL } from "@/lib/gemini";
+import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
 import { filterInput } from "@/features/ai/safety";
 import { logAIGeneration, logSafety } from "@/features/ai/log";
 import {
@@ -28,7 +28,7 @@ async function generateMaterial(
   input: GetOrCreateMaterialInput,
   subjectName: string
 ): Promise<MaterialOutput> {
-  const gemini = getGeminiClient();
+  const openai = getOpenAIClient();
   const userPrompt = buildMaterialUserPrompt({
     subjectName,
     classLevel: input.classLevel,
@@ -41,17 +41,17 @@ async function generateMaterial(
   for (let attempt = 1; attempt <= 2; attempt++) {
     const startedAt = Date.now();
     try {
-      const response = await gemini.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: userPrompt,
-        config: {
-          systemInstruction: buildMaterialSystemPrompt(),
-          temperature: 0.6,
-          responseMimeType: "application/json",
-        },
+      const response = await openai.chat.completions.create({
+        model: AI_MODEL,
+        messages: [
+          { role: "system", content: buildMaterialSystemPrompt() },
+          { role: "user", content: userPrompt },
+        ],
+        temperature: 0.6,
+        response_format: { type: "json_object" },
       });
 
-      const raw = response.text ?? "";
+      const raw = response.choices[0]?.message.content ?? "";
       const parsed = materialOutputSchema.safeParse(JSON.parse(raw));
 
       if (!parsed.success) {
@@ -154,7 +154,7 @@ export async function getOrCreateMaterial(
     return {
       ok: false,
       error:
-        "Materi belum bisa dibuat. Periksa koneksi atau kunci API Gemini, lalu coba lagi.",
+        "Materi belum bisa dibuat. Periksa koneksi atau kunci API OpenAI, lalu coba lagi.",
     };
   }
 }

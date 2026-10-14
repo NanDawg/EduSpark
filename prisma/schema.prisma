@@ -104,7 +104,7 @@ model AIGenerationLog {
   type       String
   prompt     String
   response   String?
-  model      String   @default("gemini")
+  model      String   @default("openai")
   status     String
   durationMs Int?
   createdAt  DateTime @default(now())

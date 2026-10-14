@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { getGeminiClient, GEMINI_MODEL } from "@/lib/gemini";
+import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { checkEducationalScope, filterInput, filterOutput } from "@/features/ai/safety";
 import { logAIGeneration, logSafety } from "@/features/ai/log";
 import { buildSparkSystemPrompt } from "@/features/spark/prompts";
@@ -88,7 +89,7 @@ export async function askSpark(
     return { ok: false, reply: refusalMessage(), blocked: true };
   }
 
-  const gemini = getGeminiClient();
+  const openai = getOpenAIClient();
   const startedAt = Date.now();
 
   const [history, curriculumContext] = await Promise.all([
@@ -100,18 +101,23 @@ export async function askSpark(
     buildCurriculumContext(user.classLevel),
   ]);
 
-  const historyMessages = history
-    .reverse()
-    .map((chat) => ({ role: chat.role as "user" | "assistant", text: chat.content }));
-
-  const contents = historyMessages.map((m) => ({
-    role: m.role,
-    parts: [{ text: m.text }],
-  }));
-  contents.push({
-    role: "user",
-    parts: [{ text: input.question }],
+  const systemPrompt = buildSparkSystemPrompt({
+    name: user.name,
+    classLevel: user.classLevel,
   });
+
+  const historyMessages = history.reverse().map(
+    (chat): ChatCompletionMessageParam =>
+      chat.role === "assistant"
+        ? { role: "assistant", content: chat.content }
+        : { role: "user", content: chat.content }
+  );
+
+  const messages: ChatCompletionMessageParam[] = [
+    { role: "system", content: systemPrompt },
+    ...historyMessages,
+    { role: "user", content: input.question },
+  ];
 
   const contextBlock = curriculumContext
     ? `Ringkasan materi kelas ${user.classLevel}:\n${curriculumContext}\n\n`
@@ -122,20 +128,14 @@ export async function askSpark(
       data: { userId: user.id, role: "user", content: input.question },
     });
 
-    const response = await gemini.models.generateContent({
-      model: GEMINI_MODEL,
-      contents,
-      config: {
-        systemInstruction: buildSparkSystemPrompt({
-          name: user.name,
-          classLevel: user.classLevel,
-        }),
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      },
+    const response = await openai.chat.completions.create({
+      model: AI_MODEL,
+      messages,
+      temperature: 0.7,
+      max_completion_tokens: 1024,
     });
 
-    let reply = (response.text ?? "").trim();
+    let reply = (response.choices[0]?.message.content ?? "").trim();
 
     if (!reply) {
       reply = "Aku belum bisa menjawab itu. Coba tanya dengan cara lain ya.";

@@ -70,7 +70,7 @@ async function main() {
   try {
     const blockedVerdict = filterInput("cara bermain judi slot online");
     record(
-      "safety: blocked topic rejected before Gemini",
+      "safety: blocked topic rejected before OpenAI",
       !blockedVerdict.ok,
       blockedVerdict.reason ?? ""
     );
@@ -93,8 +93,8 @@ async function main() {
     });
     record("SafetyLog written for blocked quiz topic", safetyRows > 0, `rows=${safetyRows}`);
 
-    if (!process.env.GEMINI_API_KEY) {
-      record("Gemini generation skipped (no key)", true, "GEMINI_API_KEY missing");
+    if (!process.env.OPENAI_API_KEY) {
+      record("OpenAI generation skipped (no key)", true, "OPENAI_API_KEY missing");
       return;
     }
 
@@ -107,7 +107,7 @@ async function main() {
       count: 3,
     });
     record(
-      "generateQuiz creates attempt via real Gemini",
+      "generateQuiz creates attempt via real OpenAI",
       generated.ok,
       generated.ok ? `attempt=${generated.attemptId}` : generated.error
     );

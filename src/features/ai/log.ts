@@ -19,7 +19,7 @@ export async function logAIGeneration(entry: {
         type: entry.type,
         prompt: entry.prompt.slice(0, 8000),
         response: entry.response?.slice(0, 8000) ?? null,
-        model: "gemini",
+        model: "openai",
         status: entry.status,
         durationMs: entry.durationMs ?? null,
       },

@@ -2,7 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { SignJWT } from "jose";
 
-const BASE = process.env.SMOKE_BASE_URL ?? "http://localhost:3000";
+const BASE = process.env.SMOKE_BASE_URL ?? "https://kenari.id/v1";
 
 const prisma = new PrismaClient();
 

@@ -18,7 +18,7 @@ ARCHITECTURE.md - AI_SYSTEM.md - DEVELOPMENT_PLAN.md
 
 ## Technology
 
-Use: - Next.js - TypeScript - Prisma - SQLite - Gemini API
+Use: - Next.js - TypeScript - Prisma - SQLite - OpenAI API
 
 ## Code Quality
 

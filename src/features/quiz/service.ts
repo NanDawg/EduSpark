@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { getGeminiClient, GEMINI_MODEL } from "@/lib/gemini";
+import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
 import { filterInput, filterOutput } from "@/features/ai/safety";
 import { logAIGeneration, logSafety } from "@/features/ai/log";
 import {
@@ -48,7 +48,7 @@ async function generateQuizQuestions(
   input: GenerateQuizInput,
   subjectName: string
 ): Promise<QuizOutput> {
-  const gemini = getGeminiClient();
+  const openai = getOpenAIClient();
   const prompt = buildQuizUserPrompt({
     subjectName,
     classLevel: input.classLevel,
@@ -62,17 +62,17 @@ async function generateQuizQuestions(
   for (let attempt = 1; attempt <= 2; attempt++) {
     const startedAt = Date.now();
     try {
-      const response = await gemini.models.generateContent({
-        model: GEMINI_MODEL,
-        contents: prompt,
-        config: {
-          systemInstruction: buildQuizSystemPrompt(),
-          temperature: 0.6,
-          responseMimeType: "application/json",
-        },
+      const response = await openai.chat.completions.create({
+        model: AI_MODEL,
+        messages: [
+          { role: "system", content: buildQuizSystemPrompt() },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.6,
+        response_format: { type: "json_object" },
       });
 
-      const raw = response.text ?? "";
+      const raw = response.choices[0]?.message.content ?? "";
       const parsed = quizOutputSchema.safeParse(JSON.parse(raw));
 
       if (!parsed.success) {
@@ -223,7 +223,7 @@ export async function generateQuiz(
     return {
       ok: false,
       error:
-        "Kuis belum bisa dibuat. Periksa koneksi atau kunci API Gemini, lalu coba lagi.",
+        "Kuis belum bisa dibuat. Periksa koneksi atau kunci API OpenAI, lalu coba lagi.",
     };
   }
 }

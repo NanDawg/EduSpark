@@ -48,7 +48,7 @@ async function main() {
   const afterLogs = await prisma.safetyLog.count();
 
   record(
-    "askSpark refuses blocked question without Gemini call",
+    "askSpark refuses blocked question without OpenAI call",
     !result.ok && result.blocked && result.reply.includes("pelajaran sekolah"),
     result.reply.slice(0, 60)
   );
@@ -67,9 +67,9 @@ async function main() {
     `blockedChats=${blockedChats}`
   );
 
-  if (!process.env.GEMINI_API_KEY) {
+  if (!process.env.OPENAI_API_KEY) {
     console.log(
-      "NOTE: GEMINI_API_KEY kosong. Jalankan ulang dengan kunci untuk menguji scope check, generasi materi, dan jawaban Spark sungguhan."
+      "NOTE: OPENAI_API_KEY kosong. Jalankan ulang dengan kunci untuk menguji scope check, generasi materi, dan jawaban Spark sungguhan."
     );
   }
 }

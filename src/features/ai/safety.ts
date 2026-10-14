@@ -1,7 +1,7 @@
 import "server-only";
-import { getGeminiClient, GEMINI_MODEL } from "@/lib/gemini";
+import { getOpenAIClient, AI_MODEL } from "@/lib/openai";
 import { logAIGeneration, logSafety } from "@/features/ai/log";
-import { SCOPE_GENERATION_CONFIG, SCOPE_PROMPT, interpretScopeResponse } from "@/features/ai/scope-check";
+import { SCOPE_PROMPT, SCOPE_RESPONSE_SCHEMA, interpretScopeResponse } from "@/features/ai/scope-check";
 
 const MAX_INPUT_LENGTH = 2000;
 
@@ -53,17 +53,26 @@ export async function checkEducationalScope(
 ): Promise<SafetyVerdict> {
   const startedAt = Date.now();
   try {
-    const gemini = getGeminiClient();
-    const response = await gemini.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: `Pertanyaan siswa:\n${question}`,
-      config: {
-        systemInstruction: SCOPE_PROMPT,
-        ...SCOPE_GENERATION_CONFIG,
+    const openai = getOpenAIClient();
+    const response = await openai.chat.completions.create({
+      model: AI_MODEL,
+      messages: [
+        { role: "system", content: SCOPE_PROMPT },
+        { role: "user", content: `Pertanyaan siswa:\n${question}` },
+      ],
+      temperature: 0,
+      max_completion_tokens: 200,
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "scope_verdict",
+          strict: true,
+          schema: SCOPE_RESPONSE_SCHEMA,
+        },
       },
     });
 
-    const raw = response.text ?? "";
+    const raw = response.choices[0]?.message.content ?? "";
     const outcome = interpretScopeResponse(raw);
 
     if (outcome.status === "invalid") {
