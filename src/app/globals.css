@@ -12,8 +12,11 @@
   - brand-ink #0B2B4D: navy text on brand fills (5.44 AA).
   - ai #22D3EE / ai-strong #0E7490: DESIGN.md Spark Cyan; cyan is a fill, cyan text uses the darkened tone (5.12 AA).
   - reward #FFD84D: DESIGN.md Sunny Yellow; XP/reward surfaces with ink text (10.5 AA).
+  - reward-strong #8A6100: darkened Sunny Yellow; reward/XP text and icons on light surfaces (5.5 AA).
   - growth #4CD97B: DESIGN.md Growth Green; progress fill only, always paired with a text value (never color-only status).
+  - growth-strong #14803F: darkened Growth Green; success text and icons on light surfaces (5.0 AA).
   Fixed light theme: DESIGN.md defines a light brand world for SD kids; no dark toggle shipped (R-21).
+  Motion: every animation is guarded by prefers-reduced-motion (bottom of this file).
 */
 @theme inline {
   --color-background: var(--background);
@@ -53,7 +56,9 @@
   --color-ai-strong: var(--ai-strong);
   --color-ai-soft: var(--ai-soft);
   --color-reward: var(--reward);
+  --color-reward-strong: var(--reward-strong);
   --color-growth: var(--growth);
+  --color-growth-strong: var(--growth-strong);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -90,7 +95,9 @@
   --ai-strong: #0e7490;
   --ai-soft: #e6fafd;
   --reward: #ffd84d;
+  --reward-strong: #8a6100;
   --growth: #4cd97b;
+  --growth-strong: #14803f;
   --radius: 0.75rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #172b3a;
@@ -118,4 +125,92 @@
   h4 {
     font-family: var(--font-fredoka), var(--font-nunito), sans-serif;
   }
+  /* Visible focus for plain links (buttons/inputs define their own ring). */
+  a[href]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  a[data-slot="button"]:focus-visible {
+    outline: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Spark thinking state: gentle bob while the assistant is working. */
+@keyframes spark-think {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-1.5px) scale(1.05);
+  }
+}
+
+.spark-thinking {
+  animation: spark-think 1.2s ease-in-out infinite;
+}
+
+/* Reward moment: one-shot pop for badge unlock and XP gain. */
+@keyframes reward-pop {
+  0% {
+    transform: scale(0.86);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.reward-pop {
+  animation: reward-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Reward moment: score/answer reveal for quiz results. */
+@keyframes reward-rise {
+  0% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.reward-rise {
+  animation: reward-rise 0.4s ease-out both;
+}
+
+/* Spark chat: three-dot thinking indicator. */
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+.typing-dot {
+  animation: typing-dot 1s ease-in-out infinite;
 }

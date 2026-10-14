@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { AnimatedNumber } from "@/components/animated-number";
 import { cn } from "cn";
 import { DIFFICULTY_LABELS, type QuizDifficulty } from "@/features/quiz/schemas";
 import type { UnlockedBadge } from "@/features/gamification/badges";
@@ -46,7 +48,7 @@ export function QuizResult({
     <div className="flex flex-col gap-6">
       <section
         aria-label="Hasil kuis"
-        className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5"
+        className="reward-rise flex flex-col gap-4 rounded-xl border border-border bg-card p-5"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
@@ -57,14 +59,14 @@ export function QuizResult({
               {quizTopic}
             </h2>
           </div>
-          <span className="rounded-full bg-reward px-3 py-1 text-sm font-bold text-foreground">
+          <Badge variant="reward" className="reward-pop text-sm">
             +{xpAwarded} XP
-          </span>
+          </Badge>
         </div>
 
         <div className="flex items-baseline gap-3">
           <span className="font-heading text-4xl font-semibold text-foreground">
-            {score ?? 0}
+            <AnimatedNumber value={score ?? 0} duration={900} />
           </span>
           <span className="text-sm text-muted-foreground">
             nilai · {correctCount ?? 0} benar dari {totalQuestions} soal
@@ -83,14 +85,15 @@ export function QuizResult({
             <p className="text-sm font-semibold text-brand-strong">
               Badge baru terbuka!
             </p>
-            <ul className="flex flex-wrap gap-2">
+            <ul className="flex flex-wrap gap-3">
               {unlockedBadges.map((badge) => (
-                <li
-                  key={badge.id}
-                  className="rounded-full bg-reward px-3 py-1 text-xs font-bold text-foreground"
-                  title={badge.description}
-                >
-                  {badge.name}
+                <li key={badge.id} className="flex flex-col gap-0.5">
+                  <Badge variant="reward" className="reward-pop">
+                    {badge.name}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {badge.description}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -122,7 +125,7 @@ export function QuizResult({
                   className={cn(
                     "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold",
                     answer.isCorrect
-                      ? "bg-growth/20 text-foreground"
+                      ? "bg-growth/15 text-growth-strong"
                       : "bg-destructive/10 text-destructive"
                   )}
                 >
@@ -151,7 +154,7 @@ export function QuizResult({
                       </span>
                       <span>{option}</span>
                       {isCorrectIndex && (
-                        <span aria-hidden className="text-growth">
+                        <span className="font-semibold text-growth-strong">
                           (jawaban benar)
                         </span>
                       )}

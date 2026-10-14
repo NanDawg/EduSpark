@@ -18,10 +18,10 @@ export function AnswerOption({
   return (
     <label
       className={cn(
-        "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-colors",
+        "flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all active:scale-[0.99]",
         "focus-within:ring-3 focus-within:ring-ring/50",
         checked
-          ? "border-brand bg-brand-soft text-foreground"
+          ? "border-brand bg-brand-soft text-foreground shadow-sm"
           : "border-border bg-card text-foreground hover:bg-muted"
       )}
     >

@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/features/auth/user";
 import { prisma } from "@/lib/prisma";
 import { listRecentMaterials } from "@/features/curriculum/service";
 import { QuizForm } from "@/features/quiz/components/quiz-form";
+import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
   title: "Kuis | EduSpark",
@@ -102,11 +103,16 @@ export default async function QuizPage() {
                       {formatDate.format(attempt.startedAt)}
                     </span>
                   </div>
-                  <span className="shrink-0 rounded-full bg-reward px-3 py-1 text-xs font-bold text-foreground">
+                  <Badge
+                    variant={
+                      attempt.status === "completed" ? "reward" : "growth"
+                    }
+                    className="shrink-0"
+                  >
                     {attempt.status === "completed"
                       ? `${attempt.score ?? 0} nilai`
                       : "Lanjutkan"}
-                  </span>
+                  </Badge>
                 </Link>
               </li>
             ))}

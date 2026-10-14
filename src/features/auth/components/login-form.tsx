@@ -24,6 +24,8 @@ export function LoginForm() {
           autoComplete="username"
           placeholder="username kamu"
           required
+          aria-invalid={state.error ? true : undefined}
+          aria-describedby={state.error ? "auth-error" : undefined}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -35,10 +37,12 @@ export function LoginForm() {
           autoComplete="current-password"
           placeholder="kata sandi kamu"
           required
+          aria-invalid={state.error ? true : undefined}
+          aria-describedby={state.error ? "auth-error" : undefined}
         />
       </div>
       {state.error && (
-        <p role="alert" className="text-sm font-medium text-destructive">
+        <p id="auth-error" role="alert" className="text-sm font-medium text-destructive">
           {state.error}
         </p>
       )}

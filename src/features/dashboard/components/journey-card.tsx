@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Map } from "lucide-react";
+import { Map, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import type { JourneySummary } from "@/features/adventure/service";
@@ -15,7 +15,7 @@ export function JourneyCard({ summary }: { summary: JourneySummary }) {
   return (
     <section
       aria-labelledby="journey-card-heading"
-      className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5"
+      className="flex flex-col gap-4 rounded-xl border-2 border-brand bg-card p-5"
     >
       <div className="flex items-center gap-2.5">
         <span
@@ -24,14 +24,14 @@ export function JourneyCard({ summary }: { summary: JourneySummary }) {
         >
           <Map className="size-5" />
         </span>
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <h2
             id="journey-card-heading"
             className="font-heading text-lg font-semibold text-foreground"
           >
-            Petualangan Belajar
+            Lanjutkan belajar
           </h2>
-          <span className="text-xs text-muted-foreground">
+          <span className="truncate text-xs text-muted-foreground">
             {allDone
               ? "Semua misi selesai. Kerja bagus!"
               : next
@@ -44,12 +44,13 @@ export function JourneyCard({ summary }: { summary: JourneySummary }) {
       <ProgressBar
         value={summary.percent}
         label="Progres perjalanan"
-        valueText={`${summary.completedNodes} dari ${summary.totalNodes} simpul · ${summary.percent}%`}
+        valueText={`${summary.completedNodes} dari ${summary.totalNodes} misi · ${summary.percent}%`}
       />
 
       <div>
-        <Button asChild>
+        <Button size="lg" asChild>
           <Link href={next ? `/adventure/${next.nodeId}` : "/adventure"}>
+            <Play aria-hidden />
             {next ? "Lanjutkan misi" : "Buka peta"}
           </Link>
         </Button>

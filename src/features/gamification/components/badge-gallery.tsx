@@ -48,12 +48,11 @@ export function BadgeGallery({ badges }: { badges: BadgeWithEarned[] }) {
             return (
               <li
                 key={badge.id}
-                title={badge.description}
                 className={cn(
                   "flex flex-col items-center gap-2 rounded-xl border p-4 text-center",
                   earned
                     ? "border-reward bg-reward/15"
-                    : "border-border bg-card opacity-70"
+                    : "border-border bg-card"
                 )}
               >
                 <span
@@ -61,7 +60,7 @@ export function BadgeGallery({ badges }: { badges: BadgeWithEarned[] }) {
                   className={cn(
                     "flex size-10 items-center justify-center rounded-xl",
                     earned
-                      ? "bg-reward text-foreground"
+                      ? "bg-reward text-brand-ink"
                       : "bg-muted text-muted-foreground"
                   )}
                 >
@@ -70,9 +69,19 @@ export function BadgeGallery({ badges }: { badges: BadgeWithEarned[] }) {
                 <span className="text-sm font-semibold text-foreground">
                   {badge.name}
                 </span>
-                <span className="text-xs leading-snug text-muted-foreground">
+                <span
+                  className={cn(
+                    "text-xs leading-snug",
+                    earned ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
                   {badge.description}
                 </span>
+                {!earned && (
+                  <span className="text-xs font-semibold text-muted-foreground">
+                    Terkunci
+                  </span>
+                )}
               </li>
             );
           })}

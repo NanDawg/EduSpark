@@ -20,8 +20,11 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/") {
-    const target = isAuthenticated ? "/dashboard" : "/login";
-    return NextResponse.redirect(new URL(target, request.url));
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    // Logged-out visitors get the public landing page.
+    return NextResponse.next();
   }
 
   const isProtected = protectedPrefixes.some(

@@ -13,11 +13,18 @@ export const metadata: Metadata = {
 
 export const instant = false;
 
-export default async function SparkPage() {
+export default async function SparkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
+
+  const { q } = await searchParams;
+  const draft = typeof q === "string" ? q.trim() : "";
 
   const history = await getChatHistory(user.id);
   const messages: ChatMessage[] = history
@@ -41,7 +48,7 @@ export default async function SparkPage() {
         </p>
       </header>
 
-      <ChatWindow initialMessages={messages} />
+      <ChatWindow initialMessages={messages} initialDraft={draft} />
     </div>
   );
 }

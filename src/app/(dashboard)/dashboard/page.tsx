@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SubjectCard } from "@/features/dashboard/components/subject-card";
 import { SparkCtaCard } from "@/features/dashboard/components/spark-cta-card";
+import { WelcomeHero } from "@/features/dashboard/components/welcome-hero";
+import { DailyGoalCard } from "@/features/dashboard/components/daily-goal-card";
 import { getCurrentUser } from "@/features/auth/user";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getLevelProgress } from "@/features/gamification/config";
 import { getStreak, listXpHistory } from "@/features/gamification/service";
 import { listBadgesWithStatus } from "@/features/gamification/badges";
-import { LevelCard } from "@/features/gamification/components/level-card";
 import { BadgeGallery } from "@/features/gamification/components/badge-gallery";
 import { XpHistory } from "@/features/gamification/components/xp-history";
 import { getLearningProgress } from "@/features/progress/service";
@@ -34,66 +34,61 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [subjects, badges, streak, xpHistory, learningProgress, adventure] =
-    await Promise.all([
-      prisma.subject.findMany({ orderBy: { name: "asc" } }),
-      listBadgesWithStatus(user.id),
-      getStreak(user.id),
-      listXpHistory(user.id, 6),
-      getLearningProgress(user.id),
-      getAdventureOverview(user.id),
-    ]);
-  const initial = user.name.trim().charAt(0).toUpperCase() || "S";
+  const now = new Date();
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const [
+    subjects,
+    badges,
+    streak,
+    xpHistory,
+    learningProgress,
+    adventure,
+    lessonsToday,
+    quizzesToday,
+    xpToday,
+  ] = await Promise.all([
+    prisma.subject.findMany({ orderBy: { name: "asc" } }),
+    listBadgesWithStatus(user.id),
+    getStreak(user.id),
+    listXpHistory(user.id, 6),
+    getLearningProgress(user.id),
+    getAdventureOverview(user.id),
+    prisma.materialProgress.count({
+      where: { userId: user.id, completedAt: { gte: startOfDay } },
+    }),
+    prisma.quizAttempt.count({
+      where: {
+        userId: user.id,
+        status: "completed",
+        completedAt: { gte: startOfDay },
+      },
+    }),
+    prisma.xPHistory.aggregate({
+      where: { userId: user.id, createdAt: { gte: startOfDay } },
+      _sum: { amount: true },
+    }),
+  ]);
   const levelProgress = getLevelProgress(user.xp);
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6 sm:px-6 md:py-10">
-      <section aria-labelledby="greeting-heading" className="flex flex-col gap-1">
-        <h1
-          id="greeting-heading"
-          className="font-heading text-3xl font-semibold text-foreground"
-        >
-          Halo, {user.name}!
-        </h1>
-        <p className="text-muted-foreground">
-          Siap belajar hari ini? Pilih pelajaran atau tanya Spark.
-        </p>
-      </section>
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6 sm:px-6 md:py-10 xl:max-w-5xl">
+      <WelcomeHero
+        user={user}
+        levelProgress={levelProgress}
+        streak={streak}
+      />
 
-      <section
-        aria-label="Profil dan progres"
-        className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"
-      >
-        <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5">
-          <Avatar className="size-14 border-2 border-brand-soft">
-            <AvatarFallback className="bg-brand-soft font-heading text-xl font-semibold text-brand-strong">
-              {initial}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex min-w-0 flex-col">
-            <p className="truncate font-heading text-lg font-semibold text-foreground">
-              {user.name}
-            </p>
-            <p className="truncate text-sm text-muted-foreground">
-              @{user.username}
-            </p>
-            <p className="mt-1 text-sm font-semibold text-brand-strong">
-              Kelas {user.classLevel}
-            </p>
-          </div>
-        </div>
-
-        <LevelCard
-          name={user.name}
-          xp={user.xp}
-          levelProgress={levelProgress}
-          streak={streak}
+      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+        <JourneyCard summary={adventure.summary} />
+        <DailyGoalCard
+          lessonsToday={lessonsToday}
+          quizzesToday={quizzesToday}
+          xpToday={xpToday._sum.amount ?? 0}
         />
-      </section>
+      </div>
 
       <ProgressSection progress={learningProgress} />
-
-      <JourneyCard summary={adventure.summary} />
 
       <section aria-labelledby="subjects-heading" className="flex flex-col gap-4">
         <h2
