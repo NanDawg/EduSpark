@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft, Check, Lock, Star } from "lucide-react";
+import { ArrowLeft, Check, Lock, Play, Star } from "lucide-react";
 import { cn } from "cn";
 import { getCurrentUser } from "@/features/auth/user";
 import { prisma } from "@/lib/prisma";
@@ -70,7 +70,7 @@ function StatusBanner({
     return (
       <section
         aria-label="Status misi"
-        className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between"
+        className="reward-rise flex flex-col gap-3 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-center gap-3">
           <span
@@ -109,6 +109,44 @@ function StatusBanner({
               <Link href="/adventure">Kembali ke peta</Link>
             </Button>
           )}
+        </div>
+      </section>
+    );
+  }
+
+  if (node.status === "current") {
+    return (
+      <section
+        aria-label="Status misi"
+        className="flex flex-col gap-3 rounded-xl border-2 border-brand bg-brand-soft p-5 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand"
+          >
+            <Play className="size-5 text-brand-ink" />
+          </span>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-foreground">
+              Misi sedang berjalan
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {node.lessonDone
+                ? "Materi sudah selesai. Tinggal kerjakan kuis."
+                : "Mulai dari membaca materi, lalu kerjakan kuis."}
+            </span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button asChild>
+            <a href="#action-heading">
+              {node.lessonDone ? "Kerjakan kuis" : "Mulai misi"}
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/adventure">Ke peta</Link>
+          </Button>
         </div>
       </section>
     );

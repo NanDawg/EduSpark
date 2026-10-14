@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { BookOpen, ClipboardCheck, House, LogOut, Map, MessageCircle } from "lucide-react";
 import { logoutAction } from "@/actions/auth";
 import { cn } from "cn";
+import { LogoMark } from "@/components/brand/logo";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navItems = [
   { href: "/dashboard", label: "Beranda", icon: House },
@@ -30,16 +32,17 @@ export function AppNav({
   return (
     <>
       <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
-        <div className="flex items-center gap-2 px-5 py-6">
-          <span
-            aria-hidden
-            className="flex size-9 items-center justify-center rounded-xl bg-brand font-heading text-lg font-semibold text-brand-ink"
+        <div className="flex items-center gap-2.5 px-5 py-6">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2.5 rounded-lg"
+            aria-label="EduSpark, ke beranda"
           >
-            E
-          </span>
-          <span className="font-heading text-xl font-semibold text-foreground">
-            EduSpark
-          </span>
+            <LogoMark aria-hidden className="size-9" />
+            <span className="font-heading text-xl font-semibold text-foreground">
+              EduSpark
+            </span>
+          </Link>
         </div>
 
         <nav aria-label="Navigasi utama" className="flex flex-1 flex-col gap-1 px-3">
@@ -79,24 +82,22 @@ export function AppNav({
       </aside>
 
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-card px-4 py-3 md:hidden">
-        <div className="flex items-center gap-2">
-          <span
-            aria-hidden
-            className="flex size-8 items-center justify-center rounded-lg bg-brand font-heading text-base font-semibold text-brand-ink"
-          >
-            E
-          </span>
+        <Link
+          href="/dashboard"
+          aria-label="EduSpark, ke beranda"
+          className="flex items-center gap-2 rounded-lg"
+        >
+          <LogoMark aria-hidden className="size-8" />
           <span className="font-heading text-lg font-semibold text-foreground">
             EduSpark
           </span>
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
-          <span
-            aria-hidden
-            className="flex size-8 items-center justify-center rounded-full bg-brand-soft text-sm font-bold text-brand-strong"
-          >
-            {initial}
-          </span>
+          <Avatar>
+            <AvatarFallback className="bg-brand-soft text-sm font-bold text-brand-strong">
+              {initial}
+            </AvatarFallback>
+          </Avatar>
           <form action={logoutAction}>
             <button
               type="submit"
@@ -110,7 +111,7 @@ export function AppNav({
       </header>
 
       <nav
-        aria-label="Navigasi utama"
+        aria-label="Navigasi utama bawah"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         <div className="grid grid-cols-5">

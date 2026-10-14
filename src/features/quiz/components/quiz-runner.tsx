@@ -5,8 +5,9 @@ import {
   submitQuizAction,
   type SubmitQuizState,
 } from "@/actions/quiz";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
-import { ProgressBar } from "@/components/ui/progress-bar";
+import { Badge } from "@/components/ui/badge";
 import { AnswerOption } from "@/features/quiz/components/answer-option";
 import { DIFFICULTY_LABELS, type QuizDifficulty } from "@/features/quiz/schemas";
 
@@ -69,22 +70,51 @@ export function QuizRunner({
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-bold text-brand-strong">
-            {subjectName}
-          </span>
-          <span className="rounded-full bg-ai-soft px-2.5 py-0.5 text-xs font-bold text-ai-strong">
-            {difficultyLabel}
+          <Badge variant="secondary">{subjectName}</Badge>
+          <Badge variant="ai">{difficultyLabel}</Badge>
+          <span className="ml-auto text-sm font-semibold text-muted-foreground">
+            Soal {currentIndex + 1} dari {total}
           </span>
         </div>
-        <ProgressBar
-          value={currentIndex + 1}
-          max={total}
-          label="Soal"
-          valueText={`Soal ${currentIndex + 1} dari ${total}`}
-        />
+        <ol
+          aria-label="Daftar soal"
+          className="flex flex-wrap items-center gap-1.5"
+        >
+          {questions.map((question, index) => {
+            const answered = selections[question.id] !== undefined;
+            const isCurrent = index === currentIndex;
+            return (
+              <li key={question.id}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentIndex(index)}
+                  disabled={isPending}
+                  aria-label={`Soal ${index + 1}, ${
+                    answered ? "terjawab" : "belum terjawab"
+                  }`}
+                  aria-current={isCurrent ? "step" : undefined}
+                  className={cn(
+                    "flex size-9 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                    answered
+                      ? "bg-growth/20 text-growth-strong"
+                      : "bg-muted text-muted-foreground",
+                    isCurrent &&
+                      "bg-brand-soft text-brand-strong ring-2 ring-brand ring-offset-2 ring-offset-background",
+                    "hover:enabled:bg-brand-soft hover:enabled:text-brand-strong"
+                  )}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            );
+          })}
+        </ol>
       </div>
 
-      <fieldset className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+      <fieldset
+        key={current.id}
+        className="flex animate-in flex-col gap-4 rounded-xl border border-border bg-card p-5 fade-in-0 slide-in-from-right-4 duration-200"
+      >
         <legend className="px-1 font-heading text-lg font-semibold text-foreground">
           {current.question}
         </legend>

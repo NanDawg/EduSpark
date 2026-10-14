@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+
 const formatDate = new Intl.DateTimeFormat("id-ID", {
   dateStyle: "medium",
 });
@@ -39,9 +41,9 @@ export function XpHistory({ entries }: { entries: XpHistoryRow[] }) {
                   {formatDate.format(entry.createdAt)}
                 </span>
               </div>
-              <span className="shrink-0 rounded-full bg-reward px-2.5 py-0.5 text-xs font-bold text-foreground">
+              <Badge variant="reward" className="shrink-0">
                 +{entry.amount} XP
-              </span>
+              </Badge>
             </li>
           ))}
         </ul>

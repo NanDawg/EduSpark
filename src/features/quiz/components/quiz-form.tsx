@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   DIFFICULTY_LABELS,
   QUIZ_DIFFICULTIES,
@@ -66,7 +67,7 @@ export function QuizForm({
     <form action={formAction} className="flex flex-col gap-4" noValidate>
       <div className="flex flex-col gap-2">
         <Label htmlFor="quiz-subject">Mata Pelajaran</Label>
-        <select
+        <Select
           id="quiz-subject"
           name="subjectId"
           value={subjectId}
@@ -74,19 +75,19 @@ export function QuizForm({
             setSubjectId(event.target.value);
             setMaterialId("");
           }}
-          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
               {subject.name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="quiz-material">Materi (opsional)</Label>
-        <select
+        <Select
           id="quiz-material"
           value={materialId}
           onChange={(event) => {
@@ -97,7 +98,7 @@ export function QuizForm({
               setTopic(material.topic);
             }
           }}
-          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          
         >
           <option value="">Pilih topik sendiri</option>
           {subjectMaterials.map((material) => (
@@ -105,7 +106,7 @@ export function QuizForm({
               {material.title}
             </option>
           ))}
-        </select>
+        </Select>
         {subjectMaterials.length === 0 && (
           <p className="text-xs text-muted-foreground">
             Belum ada materi untuk mata pelajaran ini. Ketik topikmu sendiri.
@@ -131,36 +132,36 @@ export function QuizForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <Label htmlFor="quiz-difficulty">Tingkat Kesulitan</Label>
-          <select
+          <Select
             id="quiz-difficulty"
             name="difficulty"
             value={difficulty}
             onChange={(event) => setDifficulty(event.target.value)}
-            className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            
           >
             {QUIZ_DIFFICULTIES.map((value) => (
               <option key={value} value={value}>
                 {DIFFICULTY_LABELS[value]}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="quiz-count">Jumlah Soal</Label>
-          <select
+          <Select
             id="quiz-count"
             name="count"
             value={count}
             onChange={(event) => setCount(event.target.value)}
-            className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            
           >
             {QUIZ_QUESTION_COUNTS.map((value) => (
               <option key={value} value={value}>
                 {value} soal
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

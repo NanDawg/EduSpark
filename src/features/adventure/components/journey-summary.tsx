@@ -31,10 +31,10 @@ export function JourneySummary({ summary }: { summary: JourneySummary }) {
       <ProgressBar
         value={summary.percent}
         label="Progres kelasmu"
-        valueText={`${summary.completedNodes} dari ${summary.totalNodes} simpul · ${summary.percent}%`}
+        valueText={`${summary.completedNodes} dari ${summary.totalNodes} misi · ${summary.percent}%`}
       />
 
-      {summary.next && (
+      {summary.next ? (
         <div>
           <Button asChild>
             <Link href={`/adventure/${summary.next.nodeId}`}>
@@ -45,6 +45,14 @@ export function JourneySummary({ summary }: { summary: JourneySummary }) {
             {summary.next.subjectName} · {summary.next.pathTitle}
           </p>
         </div>
+      ) : (
+        allDone && (
+          <div>
+            <Button asChild>
+              <Link href="/learn">Belajar lagi: buat materi baru</Link>
+            </Button>
+          </div>
+        )
       )}
     </section>
   );

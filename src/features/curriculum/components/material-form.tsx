@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 type SubjectOption = {
@@ -41,18 +42,17 @@ export function MaterialForm({
     <form action={formAction} className="flex flex-col gap-4" noValidate>
       <div className="flex flex-col gap-2">
         <Label htmlFor="subjectId">Mata Pelajaran</Label>
-        <select
+        <Select
           id="subjectId"
           name="subjectId"
           defaultValue={defaultSubjectId ?? subjects[0]?.id}
-          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
               {subject.name}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="flex flex-col gap-2">

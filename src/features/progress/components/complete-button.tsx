@@ -6,6 +6,7 @@ import {
   type MarkCompleteState,
 } from "@/actions/progress";
 import { Button } from "@/components/ui/button";
+import { Trophy } from "lucide-react";
 
 export function CompleteMaterialButton({
   materialId,
@@ -28,7 +29,7 @@ export function CompleteMaterialButton({
       <form action={formAction} className="flex flex-wrap gap-3" noValidate>
         <input type="hidden" name="materialId" value={materialId} />
         {completed ? (
-          <p className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-growth/15 px-4 text-sm font-semibold text-foreground">
+          <p className="reward-pop inline-flex min-h-11 items-center gap-2 rounded-lg bg-growth/15 px-4 text-sm font-semibold text-growth-strong">
             Sudah selesai
             {state.xpAwarded ? ` +${state.xpAwarded} XP` : ""}
           </p>
@@ -45,7 +46,8 @@ export function CompleteMaterialButton({
         </p>
       )}
       {state.unlockedBadges && state.unlockedBadges.length > 0 && (
-        <p className="text-sm font-semibold text-brand-strong">
+        <p className="reward-pop flex items-center gap-2 text-sm font-semibold text-growth-strong">
+          <Trophy className="size-4 text-reward-strong" aria-hidden />
           Badge baru: {state.unlockedBadges.join(", ")}!
         </p>
       )}

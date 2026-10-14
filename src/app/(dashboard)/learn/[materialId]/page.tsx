@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/features/auth/user";
 import { getMaterialById } from "@/features/curriculum/service";
 import { isMaterialCompleted } from "@/features/progress/service";
 import { CompleteMaterialButton } from "@/features/progress/components/complete-button";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Materi | EduSpark",
@@ -95,18 +96,18 @@ export default async function MaterialPage({
           initiallyCompleted={completed}
         />
         <div className="flex flex-wrap gap-3">
-          <Link
-            href="/learn"
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
-          >
-            Buat materi lain
-          </Link>
-          <Link
-            href="/spark"
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-          >
-            Tanya Spark tentang ini
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/learn">Buat materi lain</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link
+              href={`/spark?q=${encodeURIComponent(
+                `Tolong jelaskan lagi materi ${material.title}`
+              )}`}
+            >
+              Tanya Spark tentang ini
+            </Link>
+          </Button>
         </div>
       </footer>
     </article>

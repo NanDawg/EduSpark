@@ -24,6 +24,8 @@ export function RegisterForm() {
           autoComplete="name"
           placeholder="nama panggilan kamu"
           required
+          aria-invalid={state.error ? true : undefined}
+          aria-describedby={state.error ? "auth-error" : undefined}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -35,6 +37,8 @@ export function RegisterForm() {
           autoComplete="username"
           placeholder="pilih username"
           required
+          aria-invalid={state.error ? true : undefined}
+          aria-describedby={state.error ? "auth-error" : undefined}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -46,25 +50,15 @@ export function RegisterForm() {
           autoComplete="new-password"
           placeholder="minimal 6 huruf"
           required
+          aria-invalid={state.error ? true : undefined}
+          aria-describedby={state.error ? "auth-error" : undefined}
         />
       </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="classLevel">Kelas</Label>
-        <select
-          id="classLevel"
-          name="classLevel"
-          defaultValue="3"
-          className="flex h-9 w-full rounded-lg border border-input bg-background px-3 py-1 text-sm shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          {[1, 2, 3, 4, 5, 6].map((level) => (
-            <option key={level} value={level}>
-              Kelas {level}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* EduSpark currently supports class 3 only; the value is still posted
+          so the existing registerSchema / registerAction contract is unchanged. */}
+      <input type="hidden" name="classLevel" value="3" />
       {state.error && (
-        <p role="alert" className="text-sm font-medium text-destructive">
+        <p id="auth-error" role="alert" className="text-sm font-medium text-destructive">
           {state.error}
         </p>
       )}
