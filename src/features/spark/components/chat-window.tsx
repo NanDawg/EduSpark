@@ -179,7 +179,7 @@ export function ChatWindow({
                       : "bg-ai-soft text-foreground"
               )}
             >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              <p className="whitespace-pre-wrap break-words">{message.content}</p>
               {message.blocked && (
                 <p className="mt-2 text-xs font-semibold text-muted-foreground">
                   Diblokir penjaga keamanan EduSpark
@@ -190,7 +190,7 @@ export function ChatWindow({
                   type="button"
                   onClick={() => sendQuestion(message.retryQuestion!, false)}
                   disabled={awaiting}
-                  className="mt-2 inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-destructive/40 bg-card px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50"
+                  className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-destructive/40 bg-card px-3 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50 md:min-h-9"
                 >
                   <RotateCcw className="size-3.5" aria-hidden />
                   Coba kirim ulang

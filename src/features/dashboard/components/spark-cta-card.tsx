@@ -37,7 +37,7 @@ export function SparkCtaCard() {
             <Link
               key={question}
               href={`/spark?q=${encodeURIComponent(question)}`}
-              className="inline-flex min-h-9 items-center rounded-full border border-ai/50 bg-card px-3 text-xs font-semibold text-ai-strong transition-colors hover:bg-card/70"
+              className="inline-flex min-h-11 items-center rounded-full border border-ai/50 bg-card px-3 text-xs font-semibold text-ai-strong transition-colors hover:bg-card/70 md:min-h-9"
             >
               {question}
             </Link>

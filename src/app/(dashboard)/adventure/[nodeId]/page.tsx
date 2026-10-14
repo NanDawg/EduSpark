@@ -49,7 +49,7 @@ function StatusBanner({
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {node.previousNode && (
             <Button asChild variant="outline">
               <Link href={`/adventure/${node.previousNode.id}`}>
@@ -97,7 +97,7 @@ function StatusBanner({
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {node.nextNode ? (
             <Button asChild>
               <Link href={`/adventure/${node.nextNode.id}`}>
@@ -138,7 +138,7 @@ function StatusBanner({
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button asChild>
             <a href="#action-heading">
               {node.lessonDone ? "Kerjakan kuis" : "Mulai misi"}
@@ -220,7 +220,7 @@ export default async function MissionPage({
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6 sm:px-6 md:py-10">
       <Link
         href="/adventure"
-        className="inline-flex w-fit items-center gap-1.5 rounded text-sm font-semibold text-brand-strong transition-colors hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded text-sm font-semibold text-brand-strong transition-colors hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none md:min-h-0"
       >
         <ArrowLeft className="size-4" aria-hidden />
         Kembali ke peta
@@ -232,7 +232,7 @@ export default async function MissionPage({
         </p>
         <h1
           id="mission-heading"
-          className="font-heading text-3xl font-semibold text-foreground"
+          className="font-heading text-3xl font-semibold break-words text-foreground"
         >
           {node.title}
         </h1>
@@ -309,7 +309,7 @@ export default async function MissionPage({
       {!locked && (
         <section
           aria-labelledby="action-heading"
-          className="rounded-xl border border-border bg-card p-5"
+          className="scroll-mt-24 rounded-xl border border-border bg-card p-5 md:scroll-mt-0"
         >
           <h2
             id="action-heading"

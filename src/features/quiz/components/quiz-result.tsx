@@ -118,7 +118,7 @@ export function QuizResult({
               className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5"
             >
               <div className="flex items-start justify-between gap-3">
-                <p className="font-medium text-foreground">
+                <p className="font-medium break-words text-foreground">
                   {index + 1}. {answer.question}
                 </p>
                 <span
@@ -163,7 +163,7 @@ export function QuizResult({
                 })}
               </ul>
 
-              <p className="rounded-lg bg-ai-soft p-3 text-sm leading-relaxed text-foreground">
+              <p className="rounded-lg bg-ai-soft p-3 text-sm leading-relaxed break-words text-foreground">
                 <span className="font-semibold">Pembahasan: </span>
                 {answer.explanation}
               </p>

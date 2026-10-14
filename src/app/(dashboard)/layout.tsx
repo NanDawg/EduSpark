@@ -17,7 +17,9 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
       <AppNav user={{ name: user.name, classLevel: user.classLevel }} />
-      <main className="flex-1 pb-20 md:pb-0">{children}</main>
+      <main className="flex-1 pb-[calc(5rem_+_env(safe-area-inset-bottom))] md:pb-0">
+        {children}
+      </main>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export default async function MaterialPage({
         <p className="text-sm font-semibold text-brand-strong">
           {material.subject.name} · Kelas {material.classLevel}
         </p>
-        <h1 className="font-heading text-3xl font-semibold text-foreground">
+        <h1 className="font-heading text-3xl font-semibold break-words text-foreground">
           {material.title}
         </h1>
         {material.learningObjective && (
@@ -56,7 +56,7 @@ export default async function MaterialPage({
           Penjelasan
         </h2>
         <div className="rounded-xl border border-border bg-card p-5">
-          <p className="leading-relaxed whitespace-pre-wrap text-foreground">
+          <p className="leading-relaxed whitespace-pre-wrap break-words text-foreground">
             {material.content}
           </p>
         </div>
@@ -70,7 +70,7 @@ export default async function MaterialPage({
           Contoh
         </h2>
         <div className="rounded-xl border border-border bg-card p-5">
-          <p className="leading-relaxed whitespace-pre-wrap text-foreground">
+          <p className="leading-relaxed whitespace-pre-wrap break-words text-foreground">
             {material.example}
           </p>
         </div>
@@ -84,7 +84,7 @@ export default async function MaterialPage({
           Ringkasan
         </h2>
         <div className="rounded-xl border border-border bg-ai-soft p-5">
-          <p className="leading-relaxed whitespace-pre-wrap text-foreground">
+          <p className="leading-relaxed whitespace-pre-wrap break-words text-foreground">
             {material.summary}
           </p>
         </div>

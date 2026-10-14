@@ -94,7 +94,7 @@ export function QuizRunner({
                   }`}
                   aria-current={isCurrent ? "step" : undefined}
                   className={cn(
-                    "flex size-9 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                    "flex size-11 items-center justify-center rounded-full text-sm font-bold transition-colors md:size-9",
                     answered
                       ? "bg-growth/20 text-growth-strong"
                       : "bg-muted text-muted-foreground",

@@ -47,17 +47,17 @@ function PathCard({ path }: { path: AdventurePath }) {
     >
       <header className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+          <div className="flex min-w-0 items-center gap-2.5">
             <span
               aria-hidden
-              className="flex size-9 items-center justify-center rounded-lg bg-brand-soft text-brand-strong"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-strong"
             >
               <Icon className="size-5" />
             </span>
-            <div className="flex flex-col">
+            <div className="flex min-w-0 flex-col">
               <h2
                 id={`path-${path.id}`}
-                className="font-heading text-lg font-semibold text-foreground"
+                className="font-heading text-lg font-semibold break-words text-foreground"
               >
                 {path.title}
               </h2>
