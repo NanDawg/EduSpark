@@ -111,14 +111,21 @@ export function QuizRunner({
         </ol>
       </div>
 
-      <fieldset
+      <div
         key={current.id}
-        className="flex animate-in flex-col gap-4 rounded-xl border border-border bg-card p-5 fade-in-0 slide-in-from-right-4 duration-200"
+        className="animate-in rounded-xl border border-border bg-card p-5 fade-in-0 slide-in-from-right-4 duration-200"
       >
-        <legend className="px-1 font-heading text-lg font-semibold text-foreground">
+        <h2
+          id={`question-${current.id}`}
+          className="font-heading text-lg font-semibold break-words text-foreground"
+        >
           {current.question}
-        </legend>
-        <div className="flex flex-col gap-3">
+        </h2>
+        <div
+          role="radiogroup"
+          aria-labelledby={`question-${current.id}`}
+          className="mt-4 flex flex-col gap-3"
+        >
           {current.options.map((option, optionIndex) => (
             <AnswerOption
               key={`${current.id}-${optionIndex}`}
@@ -130,7 +137,7 @@ export function QuizRunner({
             />
           ))}
         </div>
-      </fieldset>
+      </div>
 
       {state.error && (
         <p role="alert" className="text-sm font-medium text-destructive">
